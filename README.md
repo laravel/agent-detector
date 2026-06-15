@@ -50,7 +50,7 @@ $result = detectAgent();
 ## Supported Agents
 
 | Agent       | Detection Method                                                                                                                                 |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+|-------------| ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Custom      | `AI_AGENT` env var                                                                                                                               |
 | Cursor      | `CURSOR_AGENT` env var                                                                                                                           |
 | Gemini      | `GEMINI_CLI` env var                                                                                                                             |
@@ -67,6 +67,7 @@ $result = detectAgent();
 | Pi          | `PI_CODING_AGENT` env var                                                                                                                        |
 | Kiro CLI    | `KIRO_AGENT_PATH` env var                                                                                                                        |
 | v0          | `AI_AGENT=v0` env var                                                                                                                            |
+| Vibe        | `MISTRAL_API_KEY` env var                                                                                                                            |
 
 ### Custom Agent
 

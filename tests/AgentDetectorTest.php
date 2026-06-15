@@ -30,6 +30,7 @@ beforeEach(function (): void {
         'ANTIGRAVITY_AGENT',
         'PI_CODING_AGENT',
         'KIRO_AGENT_PATH',
+        'MISTRAL_API_KEY',
     ] as $var) {
         putenv($var);
     }
@@ -60,6 +61,7 @@ afterEach(function (): void {
         'ANTIGRAVITY_AGENT',
         'PI_CODING_AGENT',
         'KIRO_AGENT_PATH',
+        'MISTRAL_API_KEY',
     ] as $var) {
         putenv($var);
     }
@@ -338,6 +340,16 @@ it('detects kiro-cli via KIRO_AGENT_PATH', function (): void {
         ->and($result->knownAgent())->toBe(KnownAgent::KiroCli);
 });
 
+it('detects Mistral Vibe via MISTRAL_API_KEY', function (): void {
+    putenv('MISTRAL_API_KEY=1234');
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeTrue()
+        ->and($result->name)->toBe('vibe')
+        ->and($result->knownAgent())->toBe(KnownAgent::Vibe);
+});
+
 // Devin detection via file_exists mock
 it('detects devin via /opt/.devin file', function (): void {
     $GLOBALS['__mock_file_exists'] = fn (string $path): bool => $path === '/opt/.devin';
@@ -448,6 +460,7 @@ it('returns correct enum for known agents', function (string $envVar, string $en
     'antigravity' => ['ANTIGRAVITY_AGENT', '1', KnownAgent::Antigravity],
     'pi' => ['PI_CODING_AGENT', 'true', KnownAgent::Pi],
     'kiro-cli' => ['KIRO_AGENT_PATH', '/usr/local/bin/kiro-cli', KnownAgent::KiroCli],
+    'vibe' => ['MISTRAL_API_KEY', '12345', KnownAgent::Vibe],
 ]);
 
 it('returns null knownAgent for custom agent', function (): void {
@@ -477,6 +490,7 @@ it('returns a human-friendly label for each known agent', function (KnownAgent $
     'antigravity' => [KnownAgent::Antigravity, 'Antigravity'],
     'pi' => [KnownAgent::Pi, 'Pi'],
     'kiro-cli' => [KnownAgent::KiroCli, 'Kiro CLI'],
+    'vibe' => [KnownAgent::Vibe, 'Vibe'],
 ]);
 
 // Standalone function

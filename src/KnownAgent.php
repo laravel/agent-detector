@@ -21,6 +21,7 @@ enum KnownAgent: string
     case Antigravity = 'antigravity';
     case Pi = 'pi';
     case KiroCli = 'kiro-cli';
+    case Vibe = 'vibe';
 
     public function label(): string
     {

@@ -26,6 +26,7 @@ class AgentDetector
         'ANTIGRAVITY_AGENT' => KnownAgent::Antigravity,
         'PI_CODING_AGENT' => KnownAgent::Pi,
         'KIRO_AGENT_PATH' => KnownAgent::KiroCli,
+        'MISTRAL_API_KEY' => KnownAgent::Vibe,
     ];
 
     public static function detect(): AgentResult
