@@ -25,6 +25,7 @@ class AgentDetector
         'COPILOT_CLI' => KnownAgent::Copilot,
         'ANTIGRAVITY_AGENT' => KnownAgent::Antigravity,
         'PI_CODING_AGENT' => KnownAgent::Pi,
+        'MATTERHORN_SESSION_ID' => KnownAgent::Junie,
         'KIRO_AGENT_PATH' => KnownAgent::KiroCli,
     ];
 
