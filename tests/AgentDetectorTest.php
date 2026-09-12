@@ -29,6 +29,7 @@ beforeEach(function (): void {
         'REPL_ID',
         'ANTIGRAVITY_AGENT',
         'PI_CODING_AGENT',
+        'MATTERHORN_SESSION_ID',
         'KIRO_AGENT_PATH',
     ] as $var) {
         putenv($var);
@@ -59,6 +60,7 @@ afterEach(function (): void {
         'REPL_ID',
         'ANTIGRAVITY_AGENT',
         'PI_CODING_AGENT',
+        'MATTERHORN_SESSION_ID',
         'KIRO_AGENT_PATH',
     ] as $var) {
         putenv($var);
@@ -328,6 +330,16 @@ it('detects pi via PI_CODING_AGENT', function (): void {
         ->and($result->knownAgent())->toBe(KnownAgent::Pi);
 });
 
+it('detects junie via MATTERHORN_SESSION_ID', function (): void {
+    putenv('MATTERHORN_SESSION_ID=session-id');
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeTrue()
+        ->and($result->name)->toBe('junie')
+        ->and($result->knownAgent())->toBe(KnownAgent::Junie);
+});
+
 it('detects kiro-cli via KIRO_AGENT_PATH', function (): void {
     putenv('KIRO_AGENT_PATH=/usr/local/bin/kiro-cli');
 
@@ -447,6 +459,7 @@ it('returns correct enum for known agents', function (string $envVar, string $en
     'replit' => ['REPL_ID', 'id', KnownAgent::Replit],
     'antigravity' => ['ANTIGRAVITY_AGENT', '1', KnownAgent::Antigravity],
     'pi' => ['PI_CODING_AGENT', 'true', KnownAgent::Pi],
+    'junie' => ['MATTERHORN_SESSION_ID', 'session-id', KnownAgent::Junie],
     'kiro-cli' => ['KIRO_AGENT_PATH', '/usr/local/bin/kiro-cli', KnownAgent::KiroCli],
 ]);
 
@@ -476,6 +489,7 @@ it('returns a human-friendly label for each known agent', function (KnownAgent $
     'copilot' => [KnownAgent::Copilot, 'Copilot'],
     'antigravity' => [KnownAgent::Antigravity, 'Antigravity'],
     'pi' => [KnownAgent::Pi, 'Pi'],
+    'junie' => [KnownAgent::Junie, 'Junie'],
     'kiro-cli' => [KnownAgent::KiroCli, 'Kiro CLI'],
 ]);
 
