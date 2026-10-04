@@ -20,12 +20,12 @@ enum KnownAgent: string
     case Copilot = 'copilot';
     case Antigravity = 'antigravity';
     case Pi = 'pi';
+    case Junie = 'junie';
     case KiroCli = 'kiro-cli';
     case Kimi = 'kimi';
     case Grok = 'grok';
     case Cline = 'cline';
     case Goose = 'goose';
-    case Junie = 'junie';
     case OpenClaw = 'openclaw';
 
     public function label(): string

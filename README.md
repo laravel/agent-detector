@@ -65,13 +65,13 @@ $result = detectAgent();
 | Devin       | `/opt/.devin` file exists                                                                                                                        |
 | Antigravity | `ANTIGRAVITY_AGENT` or `ANTIGRAVITY_CLI_ALIAS` env var                                                                                           |
 | Pi          | `PI_CODING_AGENT` env var                                                                                                                        |
+| Junie       | `JUNIE_DATA`, `JUNIE_SHIM_PATH`, or `MATTERHORN_SESSION_ID` env var                                                                              |
 | Kiro CLI    | `KIRO_AGENT_PATH` env var                                                                                                                        |
 | v0          | `AI_AGENT=v0` env var                                                                                                                            |
 | Kimi        | `KIMI_PLUGIN_ROOT` env var                                                                                                                       |
 | Grok        | `GROK_PLUGIN_ROOT` or `GROK_PLUGIN_DATA` env var                                                                                                 |
 | Cline       | `CLINE_ACTIVE` env var                                                                                                                           |
 | Goose       | `GOOSE_PROVIDER` env var                                                                                                                         |
-| Junie       | `JUNIE_DATA` or `JUNIE_SHIM_PATH` env var                                                                                                        |
 | OpenClaw    | `OPENCLAW_SHELL` env var                                                                                                                         |
 
 ### Custom Agent

@@ -284,6 +284,16 @@ it('detects pi via PI_CODING_AGENT', function (): void {
         ->and($result->knownAgent())->toBe(KnownAgent::Pi);
 });
 
+it('detects junie via MATTERHORN_SESSION_ID', function (): void {
+    putenv('MATTERHORN_SESSION_ID=session-id');
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeTrue()
+        ->and($result->name)->toBe('junie')
+        ->and($result->knownAgent())->toBe(KnownAgent::Junie);
+});
+
 it('detects kiro-cli via KIRO_AGENT_PATH', function (): void {
     putenv('KIRO_AGENT_PATH=/usr/local/bin/kiro-cli');
 
@@ -410,6 +420,7 @@ it('returns correct enum for known agents', function (string $envVar, string $en
     'replit' => ['REPL_ID', 'id', KnownAgent::Replit],
     'antigravity' => ['ANTIGRAVITY_AGENT', '1', KnownAgent::Antigravity],
     'pi' => ['PI_CODING_AGENT', 'true', KnownAgent::Pi],
+    'junie' => ['MATTERHORN_SESSION_ID', 'session-id', KnownAgent::Junie],
     'kiro-cli' => ['KIRO_AGENT_PATH', '/usr/local/bin/kiro-cli', KnownAgent::KiroCli],
     'kimi' => ['KIMI_PLUGIN_ROOT', '/tmp/kimi', KnownAgent::Kimi],
     'grok plugin root' => ['GROK_PLUGIN_ROOT', '/tmp/grok', KnownAgent::Grok],

@@ -35,6 +35,7 @@ class AgentDetector
         'ANTIGRAVITY_AGENT' => KnownAgent::Antigravity,
         'ANTIGRAVITY_CLI_ALIAS' => KnownAgent::Antigravity,
         'PI_CODING_AGENT' => KnownAgent::Pi,
+        'MATTERHORN_SESSION_ID' => KnownAgent::Junie,
         'KIRO_AGENT_PATH' => KnownAgent::KiroCli,
         'OPENCLAW_SHELL' => KnownAgent::OpenClaw,
     ];
