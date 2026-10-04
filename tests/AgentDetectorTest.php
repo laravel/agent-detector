@@ -8,29 +8,7 @@ use Laravel\AgentDetector\KnownAgent;
 use function Laravel\AgentDetector\detectAgent;
 
 beforeEach(function (): void {
-    foreach ([
-        'AI_AGENT',
-        'CURSOR_AGENT',
-        'GEMINI_CLI',
-        'CODEX_SANDBOX',
-        'CODEX_CI',
-        'CODEX_THREAD_ID',
-        'AUGMENT_AGENT',
-        'OPENCODE_CLIENT',
-        'OPENCODE',
-        'AMP_CURRENT_THREAD_ID',
-        'CLAUDECODE',
-        'CLAUDE_CODE',
-        'CLAUDE_CODE_IS_COWORK',
-        'COPILOT_MODEL',
-        'COPILOT_ALLOW_ALL',
-        'COPILOT_GITHUB_TOKEN',
-        'COPILOT_CLI',
-        'REPL_ID',
-        'ANTIGRAVITY_AGENT',
-        'PI_CODING_AGENT',
-        'KIRO_AGENT_PATH',
-    ] as $var) {
+    foreach (['AI_AGENT', 'CLAUDE_CODE_IS_COWORK', ...array_keys(AgentDetector::AGENT_ENV_VARS)] as $var) {
         putenv($var);
     }
 
@@ -38,29 +16,7 @@ beforeEach(function (): void {
 });
 
 afterEach(function (): void {
-    foreach ([
-        'AI_AGENT',
-        'CURSOR_AGENT',
-        'GEMINI_CLI',
-        'CODEX_SANDBOX',
-        'CODEX_CI',
-        'CODEX_THREAD_ID',
-        'AUGMENT_AGENT',
-        'OPENCODE_CLIENT',
-        'OPENCODE',
-        'AMP_CURRENT_THREAD_ID',
-        'CLAUDECODE',
-        'CLAUDE_CODE',
-        'CLAUDE_CODE_IS_COWORK',
-        'COPILOT_MODEL',
-        'COPILOT_ALLOW_ALL',
-        'COPILOT_GITHUB_TOKEN',
-        'COPILOT_CLI',
-        'REPL_ID',
-        'ANTIGRAVITY_AGENT',
-        'PI_CODING_AGENT',
-        'KIRO_AGENT_PATH',
-    ] as $var) {
+    foreach (['AI_AGENT', 'CLAUDE_CODE_IS_COWORK', ...array_keys(AgentDetector::AGENT_ENV_VARS)] as $var) {
         putenv($var);
     }
 
@@ -338,6 +294,13 @@ it('detects kiro-cli via KIRO_AGENT_PATH', function (): void {
         ->and($result->knownAgent())->toBe(KnownAgent::KiroCli);
 });
 
+it('prioritizes GROK_PLUGIN_ROOT over CLAUDECODE', function (): void {
+    putenv('GROK_PLUGIN_ROOT=/tmp/grok');
+    putenv('CLAUDECODE=1');
+
+    expect(AgentDetector::detect()->knownAgent())->toBe(KnownAgent::Grok);
+});
+
 // Devin detection via file_exists mock
 it('detects devin via /opt/.devin file', function (): void {
     $GLOBALS['__mock_file_exists'] = fn (string $path): bool => $path === '/opt/.devin';
@@ -448,6 +411,16 @@ it('returns correct enum for known agents', function (string $envVar, string $en
     'antigravity' => ['ANTIGRAVITY_AGENT', '1', KnownAgent::Antigravity],
     'pi' => ['PI_CODING_AGENT', 'true', KnownAgent::Pi],
     'kiro-cli' => ['KIRO_AGENT_PATH', '/usr/local/bin/kiro-cli', KnownAgent::KiroCli],
+    'kimi' => ['KIMI_PLUGIN_ROOT', '/tmp/kimi', KnownAgent::Kimi],
+    'grok plugin root' => ['GROK_PLUGIN_ROOT', '/tmp/grok', KnownAgent::Grok],
+    'grok plugin data' => ['GROK_PLUGIN_DATA', '/tmp/grok', KnownAgent::Grok],
+    'cline' => ['CLINE_ACTIVE', 'true', KnownAgent::Cline],
+    'codex sandbox network disabled' => ['CODEX_SANDBOX_NETWORK_DISABLED', '1', KnownAgent::Codex],
+    'goose' => ['GOOSE_PROVIDER', 'anthropic', KnownAgent::Goose],
+    'junie data' => ['JUNIE_DATA', '/tmp/junie', KnownAgent::Junie],
+    'junie shim path' => ['JUNIE_SHIM_PATH', '/tmp/junie', KnownAgent::Junie],
+    'antigravity cli alias' => ['ANTIGRAVITY_CLI_ALIAS', 'agy', KnownAgent::Antigravity],
+    'openclaw' => ['OPENCLAW_SHELL', '1', KnownAgent::OpenClaw],
 ]);
 
 it('returns null knownAgent for custom agent', function (): void {
@@ -477,6 +450,12 @@ it('returns a human-friendly label for each known agent', function (KnownAgent $
     'antigravity' => [KnownAgent::Antigravity, 'Antigravity'],
     'pi' => [KnownAgent::Pi, 'Pi'],
     'kiro-cli' => [KnownAgent::KiroCli, 'Kiro CLI'],
+    'kimi' => [KnownAgent::Kimi, 'Kimi'],
+    'grok' => [KnownAgent::Grok, 'Grok'],
+    'cline' => [KnownAgent::Cline, 'Cline'],
+    'goose' => [KnownAgent::Goose, 'Goose'],
+    'junie' => [KnownAgent::Junie, 'Junie'],
+    'openclaw' => [KnownAgent::OpenClaw, 'OpenClaw'],
 ]);
 
 // Standalone function

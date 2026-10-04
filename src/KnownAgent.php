@@ -21,12 +21,19 @@ enum KnownAgent: string
     case Antigravity = 'antigravity';
     case Pi = 'pi';
     case KiroCli = 'kiro-cli';
+    case Kimi = 'kimi';
+    case Grok = 'grok';
+    case Cline = 'cline';
+    case Goose = 'goose';
+    case Junie = 'junie';
+    case OpenClaw = 'openclaw';
 
     public function label(): string
     {
         return match ($this) {
             self::AugmentCli => 'Augment CLI',
             self::KiroCli => 'Kiro CLI',
+            self::OpenClaw => 'OpenClaw',
             self::V0 => 'v0',
             default => ucfirst($this->value),
         };

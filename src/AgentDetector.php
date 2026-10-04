@@ -8,14 +8,23 @@ class AgentDetector
 {
     public const AGENT_ENV_VARS = [
         'CURSOR_AGENT' => KnownAgent::Cursor,
+        'KIMI_PLUGIN_ROOT' => KnownAgent::Kimi,
+        // Grok supports Claude Code plugins and may expose Claude markers, so it must win over CLAUDECODE.
+        'GROK_PLUGIN_ROOT' => KnownAgent::Grok,
+        'GROK_PLUGIN_DATA' => KnownAgent::Grok,
         'GEMINI_CLI' => KnownAgent::Gemini,
+        'CLINE_ACTIVE' => KnownAgent::Cline,
         'CODEX_SANDBOX' => KnownAgent::Codex,
         'CODEX_CI' => KnownAgent::Codex,
         'CODEX_THREAD_ID' => KnownAgent::Codex,
+        'CODEX_SANDBOX_NETWORK_DISABLED' => KnownAgent::Codex,
         'AUGMENT_AGENT' => KnownAgent::AugmentCli,
         'OPENCODE_CLIENT' => KnownAgent::Opencode,
         'OPENCODE' => KnownAgent::Opencode,
         'AMP_CURRENT_THREAD_ID' => KnownAgent::Amp,
+        'GOOSE_PROVIDER' => KnownAgent::Goose,
+        'JUNIE_DATA' => KnownAgent::Junie,
+        'JUNIE_SHIM_PATH' => KnownAgent::Junie,
         'CLAUDECODE' => KnownAgent::Claude,
         'CLAUDE_CODE' => KnownAgent::Claude,
         'REPL_ID' => KnownAgent::Replit,
@@ -24,8 +33,10 @@ class AgentDetector
         'COPILOT_GITHUB_TOKEN' => KnownAgent::Copilot,
         'COPILOT_CLI' => KnownAgent::Copilot,
         'ANTIGRAVITY_AGENT' => KnownAgent::Antigravity,
+        'ANTIGRAVITY_CLI_ALIAS' => KnownAgent::Antigravity,
         'PI_CODING_AGENT' => KnownAgent::Pi,
         'KIRO_AGENT_PATH' => KnownAgent::KiroCli,
+        'OPENCLAW_SHELL' => KnownAgent::OpenClaw,
     ];
 
     public static function detect(): AgentResult
