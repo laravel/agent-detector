@@ -8,30 +8,7 @@ use Laravel\AgentDetector\KnownAgent;
 use function Laravel\AgentDetector\detectAgent;
 
 beforeEach(function (): void {
-    foreach ([
-        'AI_AGENT',
-        'CURSOR_AGENT',
-        'GEMINI_CLI',
-        'CODEX_SANDBOX',
-        'CODEX_CI',
-        'CODEX_THREAD_ID',
-        'AUGMENT_AGENT',
-        'OPENCODE_CLIENT',
-        'OPENCODE',
-        'AMP_CURRENT_THREAD_ID',
-        'CLAUDECODE',
-        'CLAUDE_CODE',
-        'CLAUDE_CODE_IS_COWORK',
-        'COPILOT_MODEL',
-        'COPILOT_ALLOW_ALL',
-        'COPILOT_GITHUB_TOKEN',
-        'COPILOT_CLI',
-        'REPL_ID',
-        'ANTIGRAVITY_AGENT',
-        'PI_CODING_AGENT',
-        'MATTERHORN_SESSION_ID',
-        'KIRO_AGENT_PATH',
-    ] as $var) {
+    foreach (['AI_AGENT', 'CLAUDE_CODE_IS_COWORK', ...array_keys(AgentDetector::AGENT_ENV_VARS)] as $var) {
         putenv($var);
     }
 
@@ -39,30 +16,7 @@ beforeEach(function (): void {
 });
 
 afterEach(function (): void {
-    foreach ([
-        'AI_AGENT',
-        'CURSOR_AGENT',
-        'GEMINI_CLI',
-        'CODEX_SANDBOX',
-        'CODEX_CI',
-        'CODEX_THREAD_ID',
-        'AUGMENT_AGENT',
-        'OPENCODE_CLIENT',
-        'OPENCODE',
-        'AMP_CURRENT_THREAD_ID',
-        'CLAUDECODE',
-        'CLAUDE_CODE',
-        'CLAUDE_CODE_IS_COWORK',
-        'COPILOT_MODEL',
-        'COPILOT_ALLOW_ALL',
-        'COPILOT_GITHUB_TOKEN',
-        'COPILOT_CLI',
-        'REPL_ID',
-        'ANTIGRAVITY_AGENT',
-        'PI_CODING_AGENT',
-        'MATTERHORN_SESSION_ID',
-        'KIRO_AGENT_PATH',
-    ] as $var) {
+    foreach (['AI_AGENT', 'CLAUDE_CODE_IS_COWORK', ...array_keys(AgentDetector::AGENT_ENV_VARS)] as $var) {
         putenv($var);
     }
 
@@ -389,6 +343,33 @@ it('prioritizes CURSOR_AGENT over CLAUDECODE', function (): void {
     expect($result->name)->toBe('cursor');
 });
 
+it('prioritizes grok over CLAUDECODE', function (string $envVar): void {
+    putenv("{$envVar}=/tmp/grok");
+    putenv('CLAUDECODE=1');
+
+    $result = AgentDetector::detect();
+
+    expect($result->name)->toBe('grok');
+})->with(['GROK_PLUGIN_ROOT', 'GROK_PLUGIN_DATA']);
+
+it('prioritizes CLAUDECODE over newer agent env vars', function (string $envVar): void {
+    putenv("{$envVar}=1");
+    putenv('CLAUDECODE=1');
+
+    $result = AgentDetector::detect();
+
+    expect($result->name)->toBe('claude');
+})->with(['KIMI_PLUGIN_ROOT', 'CLINE_ACTIVE', 'GOOSE_TERMINAL', 'JUNIE_DATA', 'JUNIE_SHIM_PATH', 'OPENCLAW_SHELL']);
+
+it('prioritizes CODEX_SANDBOX over CLINE_ACTIVE', function (): void {
+    putenv('CODEX_SANDBOX=1');
+    putenv('CLINE_ACTIVE=true');
+
+    $result = AgentDetector::detect();
+
+    expect($result->name)->toBe('codex');
+});
+
 it('prioritizes CLAUDECODE over REPL_ID', function (): void {
     putenv('CLAUDECODE=1');
     putenv('REPL_ID=some-id');
@@ -461,6 +442,16 @@ it('returns correct enum for known agents', function (string $envVar, string $en
     'pi' => ['PI_CODING_AGENT', 'true', KnownAgent::Pi],
     'junie' => ['MATTERHORN_SESSION_ID', 'session-id', KnownAgent::Junie],
     'kiro-cli' => ['KIRO_AGENT_PATH', '/usr/local/bin/kiro-cli', KnownAgent::KiroCli],
+    'kimi' => ['KIMI_PLUGIN_ROOT', '/tmp/kimi', KnownAgent::Kimi],
+    'grok plugin root' => ['GROK_PLUGIN_ROOT', '/tmp/grok', KnownAgent::Grok],
+    'grok plugin data' => ['GROK_PLUGIN_DATA', '/tmp/grok', KnownAgent::Grok],
+    'cline' => ['CLINE_ACTIVE', 'true', KnownAgent::Cline],
+    'codex sandbox network disabled' => ['CODEX_SANDBOX_NETWORK_DISABLED', '1', KnownAgent::Codex],
+    'goose' => ['GOOSE_TERMINAL', '1', KnownAgent::Goose],
+    'junie data' => ['JUNIE_DATA', '/tmp/junie', KnownAgent::Junie],
+    'junie shim path' => ['JUNIE_SHIM_PATH', '/tmp/junie', KnownAgent::Junie],
+    'antigravity cli alias' => ['ANTIGRAVITY_CLI_ALIAS', 'agy', KnownAgent::Antigravity],
+    'openclaw' => ['OPENCLAW_SHELL', '1', KnownAgent::OpenClaw],
 ]);
 
 it('returns null knownAgent for custom agent', function (): void {
@@ -489,8 +480,13 @@ it('returns a human-friendly label for each known agent', function (KnownAgent $
     'copilot' => [KnownAgent::Copilot, 'Copilot'],
     'antigravity' => [KnownAgent::Antigravity, 'Antigravity'],
     'pi' => [KnownAgent::Pi, 'Pi'],
-    'junie' => [KnownAgent::Junie, 'Junie'],
     'kiro-cli' => [KnownAgent::KiroCli, 'Kiro CLI'],
+    'kimi' => [KnownAgent::Kimi, 'Kimi'],
+    'grok' => [KnownAgent::Grok, 'Grok'],
+    'cline' => [KnownAgent::Cline, 'Cline'],
+    'goose' => [KnownAgent::Goose, 'Goose'],
+    'junie' => [KnownAgent::Junie, 'Junie'],
+    'openclaw' => [KnownAgent::OpenClaw, 'OpenClaw'],
 ]);
 
 // Standalone function

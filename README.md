@@ -54,7 +54,7 @@ $result = detectAgent();
 | Custom      | `AI_AGENT` env var                                                                                                                               |
 | Cursor      | `CURSOR_AGENT` env var                                                                                                                           |
 | Gemini      | `GEMINI_CLI` env var                                                                                                                             |
-| Codex       | `CODEX_SANDBOX`, `CODEX_CI`, or `CODEX_THREAD_ID` env var                                                                                        |
+| Codex       | `CODEX_SANDBOX`, `CODEX_CI`, `CODEX_THREAD_ID`, or `CODEX_SANDBOX_NETWORK_DISABLED` env var                                                      |
 | Augment CLI | `AUGMENT_AGENT` env var                                                                                                                          |
 | AMP         | `AMP_CURRENT_THREAD_ID` env var                                                                                                                  |
 | Opencode    | `OPENCODE_CLIENT` or `OPENCODE` env var                                                                                                          |
@@ -63,11 +63,16 @@ $result = detectAgent();
 | Copilot     | `AI_AGENT=github-copilot`, `AI_AGENT=github-copilot-cli`, `COPILOT_MODEL`, `COPILOT_ALLOW_ALL`, `COPILOT_GITHUB_TOKEN`, or `COPILOT_CLI` env var |
 | Replit      | `REPL_ID` env var                                                                                                                                |
 | Devin       | `/opt/.devin` file exists                                                                                                                        |
-| Antigravity | `ANTIGRAVITY_AGENT` env var                                                                                                                      |
+| Antigravity | `ANTIGRAVITY_AGENT` or `ANTIGRAVITY_CLI_ALIAS` env var                                                                                           |
 | Pi          | `PI_CODING_AGENT` env var                                                                                                                        |
-| Junie       | `MATTERHORN_SESSION_ID` env var                                                                                                                  |
+| Junie       | `JUNIE_DATA`, `JUNIE_SHIM_PATH`, or `MATTERHORN_SESSION_ID` env var                                                                              |
 | Kiro CLI    | `KIRO_AGENT_PATH` env var                                                                                                                        |
 | v0          | `AI_AGENT=v0` env var                                                                                                                            |
+| Kimi        | `KIMI_PLUGIN_ROOT` env var                                                                                                                       |
+| Grok        | `GROK_PLUGIN_ROOT` or `GROK_PLUGIN_DATA` env var                                                                                                 |
+| Cline       | `CLINE_ACTIVE` env var                                                                                                                           |
+| Goose       | `GOOSE_TERMINAL` env var                                                                                                                         |
+| OpenClaw    | `OPENCLAW_SHELL` env var                                                                                                                         |
 
 ### Custom Agent
 

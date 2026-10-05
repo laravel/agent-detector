@@ -8,10 +8,14 @@ class AgentDetector
 {
     public const AGENT_ENV_VARS = [
         'CURSOR_AGENT' => KnownAgent::Cursor,
+        // Grok runs Claude Code plugins and may expose Claude Code's env vars, so it must come before them.
+        'GROK_PLUGIN_ROOT' => KnownAgent::Grok,
+        'GROK_PLUGIN_DATA' => KnownAgent::Grok,
         'GEMINI_CLI' => KnownAgent::Gemini,
         'CODEX_SANDBOX' => KnownAgent::Codex,
         'CODEX_CI' => KnownAgent::Codex,
         'CODEX_THREAD_ID' => KnownAgent::Codex,
+        'CODEX_SANDBOX_NETWORK_DISABLED' => KnownAgent::Codex,
         'AUGMENT_AGENT' => KnownAgent::AugmentCli,
         'OPENCODE_CLIENT' => KnownAgent::Opencode,
         'OPENCODE' => KnownAgent::Opencode,
@@ -24,9 +28,16 @@ class AgentDetector
         'COPILOT_GITHUB_TOKEN' => KnownAgent::Copilot,
         'COPILOT_CLI' => KnownAgent::Copilot,
         'ANTIGRAVITY_AGENT' => KnownAgent::Antigravity,
+        'ANTIGRAVITY_CLI_ALIAS' => KnownAgent::Antigravity,
         'PI_CODING_AGENT' => KnownAgent::Pi,
         'MATTERHORN_SESSION_ID' => KnownAgent::Junie,
+        'JUNIE_DATA' => KnownAgent::Junie,
+        'JUNIE_SHIM_PATH' => KnownAgent::Junie,
         'KIRO_AGENT_PATH' => KnownAgent::KiroCli,
+        'KIMI_PLUGIN_ROOT' => KnownAgent::Kimi,
+        'CLINE_ACTIVE' => KnownAgent::Cline,
+        'GOOSE_TERMINAL' => KnownAgent::Goose,
+        'OPENCLAW_SHELL' => KnownAgent::OpenClaw,
     ];
 
     public static function detect(): AgentResult
