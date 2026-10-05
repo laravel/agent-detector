@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased](https://github.com/laravel/agent-detector/compare/v2.0.3...main)
+## [Unreleased](https://github.com/laravel/agent-detector/compare/v2.0.4...main)
+
+## [v2.0.4](https://github.com/laravel/agent-detector/compare/v2.0.3...v2.0.4) - 2026-10-05
+
+### What's Changed
+
+* Add Kimi, Grok, Cline, Goose, Junie, and OpenClaw detection by [@pushpak1300](https://github.com/pushpak1300) in https://github.com/laravel/agent-detector/pull/31
+
+**Full Changelog**: https://github.com/laravel/agent-detector/compare/v2.0.3...v2.0.4
 
 ## [v2.0.3](https://github.com/laravel/agent-detector/compare/v2.0.2...v2.0.3) - 2026-09-12
 
