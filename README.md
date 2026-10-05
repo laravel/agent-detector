@@ -71,7 +71,7 @@ $result = detectAgent();
 | Kimi        | `KIMI_PLUGIN_ROOT` env var                                                                                                                       |
 | Grok        | `GROK_PLUGIN_ROOT` or `GROK_PLUGIN_DATA` env var                                                                                                 |
 | Cline       | `CLINE_ACTIVE` env var                                                                                                                           |
-| Goose       | `GOOSE_PROVIDER` env var                                                                                                                         |
+| Goose       | `GOOSE_TERMINAL` env var                                                                                                                         |
 | OpenClaw    | `OPENCLAW_SHELL` env var                                                                                                                         |
 
 ### Custom Agent

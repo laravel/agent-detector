@@ -304,13 +304,6 @@ it('detects kiro-cli via KIRO_AGENT_PATH', function (): void {
         ->and($result->knownAgent())->toBe(KnownAgent::KiroCli);
 });
 
-it('prioritizes GROK_PLUGIN_ROOT over CLAUDECODE', function (): void {
-    putenv('GROK_PLUGIN_ROOT=/tmp/grok');
-    putenv('CLAUDECODE=1');
-
-    expect(AgentDetector::detect()->knownAgent())->toBe(KnownAgent::Grok);
-});
-
 // Devin detection via file_exists mock
 it('detects devin via /opt/.devin file', function (): void {
     $GLOBALS['__mock_file_exists'] = fn (string $path): bool => $path === '/opt/.devin';
@@ -348,6 +341,33 @@ it('prioritizes CURSOR_AGENT over CLAUDECODE', function (): void {
     $result = AgentDetector::detect();
 
     expect($result->name)->toBe('cursor');
+});
+
+it('prioritizes grok over CLAUDECODE', function (string $envVar): void {
+    putenv("{$envVar}=/tmp/grok");
+    putenv('CLAUDECODE=1');
+
+    $result = AgentDetector::detect();
+
+    expect($result->name)->toBe('grok');
+})->with(['GROK_PLUGIN_ROOT', 'GROK_PLUGIN_DATA']);
+
+it('prioritizes CLAUDECODE over newer agent env vars', function (string $envVar): void {
+    putenv("{$envVar}=1");
+    putenv('CLAUDECODE=1');
+
+    $result = AgentDetector::detect();
+
+    expect($result->name)->toBe('claude');
+})->with(['KIMI_PLUGIN_ROOT', 'CLINE_ACTIVE', 'GOOSE_TERMINAL', 'JUNIE_DATA', 'JUNIE_SHIM_PATH', 'OPENCLAW_SHELL']);
+
+it('prioritizes CODEX_SANDBOX over CLINE_ACTIVE', function (): void {
+    putenv('CODEX_SANDBOX=1');
+    putenv('CLINE_ACTIVE=true');
+
+    $result = AgentDetector::detect();
+
+    expect($result->name)->toBe('codex');
 });
 
 it('prioritizes CLAUDECODE over REPL_ID', function (): void {
@@ -427,7 +447,7 @@ it('returns correct enum for known agents', function (string $envVar, string $en
     'grok plugin data' => ['GROK_PLUGIN_DATA', '/tmp/grok', KnownAgent::Grok],
     'cline' => ['CLINE_ACTIVE', 'true', KnownAgent::Cline],
     'codex sandbox network disabled' => ['CODEX_SANDBOX_NETWORK_DISABLED', '1', KnownAgent::Codex],
-    'goose' => ['GOOSE_PROVIDER', 'anthropic', KnownAgent::Goose],
+    'goose' => ['GOOSE_TERMINAL', '1', KnownAgent::Goose],
     'junie data' => ['JUNIE_DATA', '/tmp/junie', KnownAgent::Junie],
     'junie shim path' => ['JUNIE_SHIM_PATH', '/tmp/junie', KnownAgent::Junie],
     'antigravity cli alias' => ['ANTIGRAVITY_CLI_ALIAS', 'agy', KnownAgent::Antigravity],

@@ -8,12 +8,10 @@ class AgentDetector
 {
     public const AGENT_ENV_VARS = [
         'CURSOR_AGENT' => KnownAgent::Cursor,
-        'KIMI_PLUGIN_ROOT' => KnownAgent::Kimi,
-        // Grok supports Claude Code plugins and may expose Claude markers, so it must win over CLAUDECODE.
+        // Grok runs Claude Code plugins and may expose Claude Code's env vars, so it must come before them.
         'GROK_PLUGIN_ROOT' => KnownAgent::Grok,
         'GROK_PLUGIN_DATA' => KnownAgent::Grok,
         'GEMINI_CLI' => KnownAgent::Gemini,
-        'CLINE_ACTIVE' => KnownAgent::Cline,
         'CODEX_SANDBOX' => KnownAgent::Codex,
         'CODEX_CI' => KnownAgent::Codex,
         'CODEX_THREAD_ID' => KnownAgent::Codex,
@@ -22,9 +20,6 @@ class AgentDetector
         'OPENCODE_CLIENT' => KnownAgent::Opencode,
         'OPENCODE' => KnownAgent::Opencode,
         'AMP_CURRENT_THREAD_ID' => KnownAgent::Amp,
-        'GOOSE_PROVIDER' => KnownAgent::Goose,
-        'JUNIE_DATA' => KnownAgent::Junie,
-        'JUNIE_SHIM_PATH' => KnownAgent::Junie,
         'CLAUDECODE' => KnownAgent::Claude,
         'CLAUDE_CODE' => KnownAgent::Claude,
         'REPL_ID' => KnownAgent::Replit,
@@ -36,7 +31,12 @@ class AgentDetector
         'ANTIGRAVITY_CLI_ALIAS' => KnownAgent::Antigravity,
         'PI_CODING_AGENT' => KnownAgent::Pi,
         'MATTERHORN_SESSION_ID' => KnownAgent::Junie,
+        'JUNIE_DATA' => KnownAgent::Junie,
+        'JUNIE_SHIM_PATH' => KnownAgent::Junie,
         'KIRO_AGENT_PATH' => KnownAgent::KiroCli,
+        'KIMI_PLUGIN_ROOT' => KnownAgent::Kimi,
+        'CLINE_ACTIVE' => KnownAgent::Cline,
+        'GOOSE_TERMINAL' => KnownAgent::Goose,
         'OPENCLAW_SHELL' => KnownAgent::OpenClaw,
     ];
 
