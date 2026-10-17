@@ -52,7 +52,7 @@ $result = detectAgent();
 | Agent       | Detection Method                                                                                                                                 |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Custom      | `AI_AGENT` env var                                                                                                                               |
-| Cursor      | `CURSOR_AGENT` env var                                                                                                                           |
+| Cursor      | `CURSOR_AGENT` or `CURSOR_TRACE_ID` env var                                                                                                      |
 | Gemini      | `GEMINI_CLI` env var                                                                                                                             |
 | Codex       | `CODEX_SANDBOX`, `CODEX_CI`, `CODEX_THREAD_ID`, or `CODEX_SANDBOX_NETWORK_DISABLED` env var                                                      |
 | Augment CLI | `AUGMENT_AGENT` env var                                                                                                                          |
@@ -60,7 +60,7 @@ $result = detectAgent();
 | Opencode    | `OPENCODE_CLIENT` or `OPENCODE` env var                                                                                                          |
 | Claude      | `CLAUDECODE` or `CLAUDE_CODE` env var                                                                                                            |
 | Cowork      | `CLAUDE_CODE_IS_COWORK` with `CLAUDECODE` or `CLAUDE_CODE` env var                                                                               |
-| Copilot     | `AI_AGENT=github-copilot`, `AI_AGENT=github-copilot-cli`, `COPILOT_MODEL`, `COPILOT_ALLOW_ALL`, `COPILOT_GITHUB_TOKEN`, or `COPILOT_CLI` env var |
+| Copilot     | `AI_AGENT=github-copilot`, `AI_AGENT=github-copilot-cli`, `COPILOT_MODEL`, `COPILOT_ALLOW_ALL`, `COPILOT_GITHUB_TOKEN`, `COPILOT_CLI`, or `COPILOT_AGENT_SESSION_ID` with `GITHUB_ACTIONS` env var |
 | Replit      | `REPL_ID` env var                                                                                                                                |
 | Devin       | `/opt/.devin` file exists                                                                                                                        |
 | Antigravity | `ANTIGRAVITY_AGENT` or `ANTIGRAVITY_CLI_ALIAS` env var                                                                                           |
@@ -73,6 +73,13 @@ $result = detectAgent();
 | Cline       | `CLINE_ACTIVE` env var                                                                                                                           |
 | Goose       | `GOOSE_TERMINAL` env var                                                                                                                         |
 | OpenClaw    | `OPENCLAW_SHELL` env var                                                                                                                         |
+| ZCode       | `ZCODE_ENV` env var                                                                                                                              |
+| Qwen Code   | `QWEN_CODE` env var                                                                                                                              |
+| Crush       | `CRUSH` or `AI_AGENT=crush` env var                                                                                                              |
+| Windsurf    | `WINDSURF_CASCADE_TERMINAL` env var                                                                                                              |
+| Zed Agent   | `TERM_PROGRAM=zed` with an empty `PAGER` and `GIT_PAGER=cat` env vars                                                                            |
+| Kiro IDE    | `TERM_PROGRAM=kiro` env var in a non-interactive CLI process                                                                                     |
+| Jules       | `HOME=/home/jules` with `USER=swebot` env vars                                                                                                   |
 
 ### Custom Agent
 

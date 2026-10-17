@@ -11,6 +11,8 @@ class AgentDetector
         // Grok runs Claude Code plugins and may expose Claude Code's env vars, so it must come before them.
         'GROK_PLUGIN_ROOT' => KnownAgent::Grok,
         'GROK_PLUGIN_DATA' => KnownAgent::Grok,
+        // Qwen Code is a Gemini CLI fork and may inherit Gemini CLI's env vars, so it must come first.
+        'QWEN_CODE' => KnownAgent::QwenCode,
         'GEMINI_CLI' => KnownAgent::Gemini,
         'CODEX_SANDBOX' => KnownAgent::Codex,
         'CODEX_CI' => KnownAgent::Codex,
@@ -39,12 +41,18 @@ class AgentDetector
         'GOOSE_TERMINAL' => KnownAgent::Goose,
         'OPENCLAW_SHELL' => KnownAgent::OpenClaw,
         'ZCODE_ENV' => KnownAgent::ZCode,
+        'CRUSH' => KnownAgent::Crush,
+        'WINDSURF_CASCADE_TERMINAL' => KnownAgent::Windsurf,
+        // Cursor's integrated terminal also sets this for human sessions, so it
+        // comes last to let the agent CLIs running inside Cursor win.
+        'CURSOR_TRACE_ID' => KnownAgent::Cursor,
     ];
 
     public static function detect(): AgentResult
     {
         return self::fromAiAgentEnvVar()
             ?? self::fromKnownEnvVars()
+            ?? self::fromCompoundEnvVars()
             ?? self::fromFileSystem()
             ?? AgentResult::noAgent();
     }
@@ -84,6 +92,57 @@ class AgentDetector
         }
 
         return null;
+    }
+
+    protected static function fromCompoundEnvVars(): ?AgentResult
+    {
+        // Zed sets TERM_PROGRAM in both its interactive terminal and its agent's
+        // commands. Agent commands are also marked by an emptied `PAGER` with the
+        // git pager forced to `cat`, which a human's `PAGER=cat` export cannot
+        // match. The CLI check keeps servers started from a terminal, such as
+        // `php artisan serve`, from being detected on every request they serve.
+        if (getenv('TERM_PROGRAM') === 'zed' && static::isRunningInCli()
+            && getenv('PAGER') === '' && getenv('GIT_PAGER') === 'cat') {
+            return AgentResult::forAgent(KnownAgent::Zed);
+        }
+
+        // Kiro also sets TERM_PROGRAM for its IDE terminal, so a non-interactive
+        // terminal is required to avoid detecting humans working in the IDE. A
+        // human piping or redirecting output is still detected, and the CLI
+        // check keeps servers started from a terminal, such as `php artisan
+        // serve`, from being detected on every request they serve. `static::`
+        // keeps both checks overridable via a subclass in tests.
+        if (getenv('TERM_PROGRAM') === 'kiro' && static::isRunningInCli()
+            && ! static::isInteractiveTerminal()) {
+            return AgentResult::forAgent(KnownAgent::Kiro);
+        }
+
+        // Copilot's cloud coding agent runs in an ephemeral GitHub Actions environment.
+        if (getenv('COPILOT_AGENT_SESSION_ID') !== false && getenv('GITHUB_ACTIONS') !== false) {
+            return AgentResult::forAgent(KnownAgent::Copilot);
+        }
+
+        // Jules runs commands as a dedicated sandbox user.
+        if (getenv('HOME') === '/home/jules' && getenv('USER') === 'swebot') {
+            return AgentResult::forAgent(KnownAgent::Jules);
+        }
+
+        return null;
+    }
+
+    protected static function isInteractiveTerminal(): bool
+    {
+        if (! defined('STDOUT') || ! is_resource(STDOUT)) {
+            return false;
+        }
+
+        // Terminals report as TTYs, while agent subprocesses use pipes or files.
+        return stream_isatty(STDOUT);
+    }
+
+    protected static function isRunningInCli(): bool
+    {
+        return PHP_SAPI === 'cli';
     }
 
     protected static function fromFileSystem(): ?AgentResult

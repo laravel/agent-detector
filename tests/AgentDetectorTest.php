@@ -8,7 +8,13 @@ use Laravel\AgentDetector\KnownAgent;
 use function Laravel\AgentDetector\detectAgent;
 
 beforeEach(function (): void {
-    foreach (['AI_AGENT', 'CLAUDE_CODE_IS_COWORK', ...array_keys(AgentDetector::AGENT_ENV_VARS)] as $var) {
+    $GLOBALS['__original_home'] = getenv('HOME');
+    $GLOBALS['__original_user'] = getenv('USER');
+
+    putenv('HOME=/home/agent-detector');
+    putenv('USER=agent-detector');
+
+    foreach (['AI_AGENT', 'CLAUDE_CODE_IS_COWORK', 'TERM_PROGRAM', 'PAGER', 'GIT_PAGER', 'GITHUB_ACTIONS', 'COPILOT_AGENT_SESSION_ID', ...array_keys(AgentDetector::AGENT_ENV_VARS)] as $var) {
         putenv($var);
     }
 
@@ -16,8 +22,20 @@ beforeEach(function (): void {
 });
 
 afterEach(function (): void {
-    foreach (['AI_AGENT', 'CLAUDE_CODE_IS_COWORK', ...array_keys(AgentDetector::AGENT_ENV_VARS)] as $var) {
+    foreach (['AI_AGENT', 'CLAUDE_CODE_IS_COWORK', 'TERM_PROGRAM', 'PAGER', 'GIT_PAGER', 'GITHUB_ACTIONS', 'COPILOT_AGENT_SESSION_ID', ...array_keys(AgentDetector::AGENT_ENV_VARS)] as $var) {
         putenv($var);
+    }
+
+    foreach (['HOME' => '__original_home', 'USER' => '__original_user'] as $var => $key) {
+        $value = $GLOBALS[$key] ?? false;
+
+        if ($value === false) {
+            putenv($var);
+        } else {
+            putenv("{$var}={$value}");
+        }
+
+        unset($GLOBALS[$key]);
     }
 
     unset($GLOBALS['__mock_file_exists']);
@@ -72,6 +90,16 @@ it('detects v0 via AI_AGENT', function (): void {
     expect($result->isAgent)->toBeTrue()
         ->and($result->name)->toBe('v0')
         ->and($result->knownAgent())->toBe(KnownAgent::V0);
+});
+
+it('detects crush via AI_AGENT crush', function (): void {
+    putenv('AI_AGENT=crush');
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeTrue()
+        ->and($result->name)->toBe('crush')
+        ->and($result->knownAgent())->toBe(KnownAgent::Crush);
 });
 
 it('does not detect an agent when AI_AGENT is not set', function (): void {
@@ -304,6 +332,46 @@ it('detects kiro-cli via KIRO_AGENT_PATH', function (): void {
         ->and($result->knownAgent())->toBe(KnownAgent::KiroCli);
 });
 
+it('detects cursor via CURSOR_TRACE_ID', function (): void {
+    putenv('CURSOR_TRACE_ID=some-trace-id');
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeTrue()
+        ->and($result->name)->toBe('cursor')
+        ->and($result->knownAgent())->toBe(KnownAgent::Cursor);
+});
+
+it('detects qwen-code via QWEN_CODE', function (): void {
+    putenv('QWEN_CODE=1');
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeTrue()
+        ->and($result->name)->toBe('qwen-code')
+        ->and($result->knownAgent())->toBe(KnownAgent::QwenCode);
+});
+
+it('detects crush via CRUSH', function (): void {
+    putenv('CRUSH=1');
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeTrue()
+        ->and($result->name)->toBe('crush')
+        ->and($result->knownAgent())->toBe(KnownAgent::Crush);
+});
+
+it('detects windsurf via WINDSURF_CASCADE_TERMINAL', function (): void {
+    putenv('WINDSURF_CASCADE_TERMINAL=1');
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeTrue()
+        ->and($result->name)->toBe('windsurf')
+        ->and($result->knownAgent())->toBe(KnownAgent::Windsurf);
+});
+
 // Devin detection via file_exists mock
 it('detects devin via /opt/.devin file', function (): void {
     $GLOBALS['__mock_file_exists'] = fn (string $path): bool => $path === '/opt/.devin';
@@ -316,6 +384,261 @@ it('detects devin via /opt/.devin file', function (): void {
 });
 
 it('does not detect devin when /opt/.devin does not exist', function (): void {
+    $GLOBALS['__mock_file_exists'] = fn (string $path): bool => false;
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeFalse()
+        ->and($result->name)->toBeNull();
+});
+
+// Compound environment signal detection
+class NonInteractiveTerminalDetector extends AgentDetector
+{
+    protected static function isInteractiveTerminal(): bool
+    {
+        return false;
+    }
+}
+
+class InteractiveTerminalDetector extends AgentDetector
+{
+    protected static function isInteractiveTerminal(): bool
+    {
+        return true;
+    }
+}
+
+class NonCliDetector extends AgentDetector
+{
+    protected static function isRunningInCli(): bool
+    {
+        return false;
+    }
+}
+
+// Windows cannot represent an environment variable that is set to an empty value.
+it('detects zed agent via the emptied pager and git pager', function (): void {
+    putenv('TERM_PROGRAM=zed');
+    putenv('PAGER=');
+    putenv('GIT_PAGER=cat');
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeTrue()
+        ->and($result->name)->toBe('zed')
+        ->and($result->knownAgent())->toBe(KnownAgent::Zed);
+})->skipOnWindows();
+
+it('does not detect an agent in a zed terminal via PAGER cat', function (): void {
+    putenv('TERM_PROGRAM=zed');
+    putenv('PAGER=cat');
+
+    $GLOBALS['__mock_file_exists'] = fn (string $path): bool => false;
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeFalse()
+        ->and($result->name)->toBeNull();
+});
+
+it('does not detect an agent in a zed terminal without the git pager', function (): void {
+    putenv('TERM_PROGRAM=zed');
+    putenv('PAGER=');
+
+    $GLOBALS['__mock_file_exists'] = fn (string $path): bool => false;
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeFalse()
+        ->and($result->name)->toBeNull();
+});
+
+it('does not detect an agent in a zed terminal without the pager signals', function (): void {
+    putenv('TERM_PROGRAM=zed');
+
+    $GLOBALS['__mock_file_exists'] = fn (string $path): bool => false;
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeFalse()
+        ->and($result->name)->toBeNull();
+});
+
+it('does not detect zed agent via PAGER cat alone', function (): void {
+    putenv('PAGER=cat');
+
+    $GLOBALS['__mock_file_exists'] = fn (string $path): bool => false;
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeFalse()
+        ->and($result->name)->toBeNull();
+});
+
+it('does not detect zed outside of the CLI', function (): void {
+    putenv('TERM_PROGRAM=zed');
+    putenv('PAGER=');
+    putenv('GIT_PAGER=cat');
+
+    $result = NonCliDetector::detect();
+
+    expect($result->isAgent)->toBeFalse()
+        ->and($result->name)->toBeNull();
+});
+
+it('detects kiro via TERM_PROGRAM kiro in a non-interactive terminal', function (): void {
+    putenv('TERM_PROGRAM=kiro');
+
+    $result = NonInteractiveTerminalDetector::detect();
+
+    expect($result->isAgent)->toBeTrue()
+        ->and($result->name)->toBe('kiro')
+        ->and($result->knownAgent())->toBe(KnownAgent::Kiro);
+});
+
+it('does not detect kiro in an interactive terminal', function (): void {
+    putenv('TERM_PROGRAM=kiro');
+
+    $GLOBALS['__mock_file_exists'] = fn (string $path): bool => false;
+
+    $result = InteractiveTerminalDetector::detect();
+
+    expect($result->isAgent)->toBeFalse()
+        ->and($result->name)->toBeNull();
+});
+
+it('does not detect kiro outside of the CLI', function (): void {
+    putenv('TERM_PROGRAM=kiro');
+
+    $result = NonCliDetector::detect();
+
+    expect($result->isAgent)->toBeFalse()
+        ->and($result->name)->toBeNull();
+});
+
+/**
+ * Runs the detector in a fresh PHP process with stdout bound to the given
+ * descriptor, so the real terminal probe is exercised deterministically.
+ */
+function detectInSubprocess(array $stdoutDescriptor, string $setup = ''): string
+{
+    $autoload = var_export(realpath(__DIR__.'/../vendor/autoload.php'), true);
+
+    $code = 'require '.$autoload.'; '.$setup.' $name = Laravel\AgentDetector\AgentDetector::detect()->name; fwrite(STDERR, $name ?? "none");';
+
+    $process = proc_open(
+        [PHP_BINARY, '-r', $code],
+        [1 => $stdoutDescriptor, 2 => ['pipe', 'w']],
+        $pipes
+    );
+
+    expect($process)->toBeResource();
+
+    $name = stream_get_contents($pipes[2]);
+
+    fclose($pipes[2]);
+
+    if (isset($pipes[1]) && is_resource($pipes[1])) {
+        fclose($pipes[1]);
+    }
+
+    proc_close($process);
+
+    return trim($name);
+}
+
+it('detects kiro with the real terminal probe when stdout is a pipe', function (): void {
+    putenv('TERM_PROGRAM=kiro');
+
+    expect(detectInSubprocess(['pipe', 'w']))->toBe('kiro');
+});
+
+it('detects kiro with the real terminal probe when stdout is discarded', function (): void {
+    putenv('TERM_PROGRAM=kiro');
+
+    $devNull = DIRECTORY_SEPARATOR === '\\' ? 'NUL' : '/dev/null';
+
+    expect(detectInSubprocess(['file', $devNull, 'w']))->toBe('kiro');
+});
+
+it('detects kiro with the real terminal probe when stdout is closed', function (): void {
+    putenv('TERM_PROGRAM=kiro');
+
+    expect(detectInSubprocess(['pipe', 'w'], 'fclose(STDOUT);'))->toBe('kiro');
+});
+
+it('detects copilot via COPILOT_AGENT_SESSION_ID with GITHUB_ACTIONS', function (): void {
+    putenv('COPILOT_AGENT_SESSION_ID=session-id');
+    putenv('GITHUB_ACTIONS=true');
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeTrue()
+        ->and($result->name)->toBe('copilot')
+        ->and($result->knownAgent())->toBe(KnownAgent::Copilot);
+});
+
+it('does not detect copilot via COPILOT_AGENT_SESSION_ID alone', function (): void {
+    putenv('COPILOT_AGENT_SESSION_ID=session-id');
+
+    $GLOBALS['__mock_file_exists'] = fn (string $path): bool => false;
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeFalse()
+        ->and($result->name)->toBeNull();
+});
+
+it('does not detect copilot via GITHUB_ACTIONS alone', function (): void {
+    putenv('GITHUB_ACTIONS=true');
+
+    $GLOBALS['__mock_file_exists'] = fn (string $path): bool => false;
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeFalse()
+        ->and($result->name)->toBeNull();
+});
+
+it('detects copilot via COPILOT_AGENT_SESSION_ID outside of the CLI', function (): void {
+    putenv('COPILOT_AGENT_SESSION_ID=session-id');
+    putenv('GITHUB_ACTIONS=true');
+
+    $result = NonCliDetector::detect();
+
+    expect($result->isAgent)->toBeTrue()
+        ->and($result->name)->toBe('copilot')
+        ->and($result->knownAgent())->toBe(KnownAgent::Copilot);
+});
+
+it('detects jules via HOME and USER', function (): void {
+    putenv('HOME=/home/jules');
+    putenv('USER=swebot');
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeTrue()
+        ->and($result->name)->toBe('jules')
+        ->and($result->knownAgent())->toBe(KnownAgent::Jules);
+});
+
+it('does not detect jules via USER alone', function (): void {
+    putenv('USER=swebot');
+    putenv('HOME=/home/someone');
+
+    $GLOBALS['__mock_file_exists'] = fn (string $path): bool => false;
+
+    $result = AgentDetector::detect();
+
+    expect($result->isAgent)->toBeFalse()
+        ->and($result->name)->toBeNull();
+});
+
+it('does not detect jules via HOME alone', function (): void {
+    putenv('HOME=/home/jules');
+    putenv('USER=someone');
+
     $GLOBALS['__mock_file_exists'] = fn (string $path): bool => false;
 
     $result = AgentDetector::detect();
@@ -343,6 +666,53 @@ it('prioritizes CURSOR_AGENT over CLAUDECODE', function (): void {
     expect($result->name)->toBe('cursor');
 });
 
+it('prioritizes CLAUDECODE over CURSOR_TRACE_ID', function (): void {
+    putenv('CURSOR_TRACE_ID=some-trace-id');
+    putenv('CLAUDECODE=1');
+
+    $result = AgentDetector::detect();
+
+    expect($result->name)->toBe('claude');
+});
+
+it('prioritizes QWEN_CODE over GEMINI_CLI', function (): void {
+    putenv('QWEN_CODE=1');
+    putenv('GEMINI_CLI=true');
+
+    $result = AgentDetector::detect();
+
+    expect($result->name)->toBe('qwen-code');
+});
+
+it('prioritizes KIRO_AGENT_PATH over the Kiro IDE signal', function (): void {
+    putenv('KIRO_AGENT_PATH=/usr/local/bin/kiro-cli');
+    putenv('TERM_PROGRAM=kiro');
+
+    $result = AgentDetector::detect();
+
+    expect($result->name)->toBe('kiro-cli');
+});
+
+it('prioritizes CLAUDECODE over compound signals', function (): void {
+    putenv('CLAUDECODE=1');
+    putenv('TERM_PROGRAM=zed');
+    putenv('PAGER=cat');
+
+    $result = AgentDetector::detect();
+
+    expect($result->name)->toBe('claude');
+});
+
+it('prioritizes AI_AGENT over compound signals', function (): void {
+    putenv('AI_AGENT=custom');
+    putenv('TERM_PROGRAM=zed');
+    putenv('PAGER=cat');
+
+    $result = AgentDetector::detect();
+
+    expect($result->name)->toBe('custom');
+});
+
 it('prioritizes grok over CLAUDECODE', function (string $envVar): void {
     putenv("{$envVar}=/tmp/grok");
     putenv('CLAUDECODE=1');
@@ -359,7 +729,7 @@ it('prioritizes CLAUDECODE over newer agent env vars', function (string $envVar)
     $result = AgentDetector::detect();
 
     expect($result->name)->toBe('claude');
-})->with(['KIMI_PLUGIN_ROOT', 'CLINE_ACTIVE', 'GOOSE_TERMINAL', 'JUNIE_DATA', 'JUNIE_SHIM_PATH', 'OPENCLAW_SHELL']);
+})->with(['KIMI_PLUGIN_ROOT', 'CLINE_ACTIVE', 'GOOSE_TERMINAL', 'JUNIE_DATA', 'JUNIE_SHIM_PATH', 'OPENCLAW_SHELL', 'ZCODE_ENV', 'CRUSH', 'WINDSURF_CASCADE_TERMINAL', 'CURSOR_TRACE_ID']);
 
 it('prioritizes CODEX_SANDBOX over CLINE_ACTIVE', function (): void {
     putenv('CODEX_SANDBOX=1');
@@ -452,6 +822,11 @@ it('returns correct enum for known agents', function (string $envVar, string $en
     'junie shim path' => ['JUNIE_SHIM_PATH', '/tmp/junie', KnownAgent::Junie],
     'antigravity cli alias' => ['ANTIGRAVITY_CLI_ALIAS', 'agy', KnownAgent::Antigravity],
     'openclaw' => ['OPENCLAW_SHELL', '1', KnownAgent::OpenClaw],
+    'zcode' => ['ZCODE_ENV', '1', KnownAgent::ZCode],
+    'cursor trace id' => ['CURSOR_TRACE_ID', 'trace-id', KnownAgent::Cursor],
+    'qwen-code' => ['QWEN_CODE', '1', KnownAgent::QwenCode],
+    'crush' => ['CRUSH', '1', KnownAgent::Crush],
+    'windsurf' => ['WINDSURF_CASCADE_TERMINAL', '1', KnownAgent::Windsurf],
 ]);
 
 it('returns null knownAgent for custom agent', function (): void {
@@ -487,6 +862,13 @@ it('returns a human-friendly label for each known agent', function (KnownAgent $
     'goose' => [KnownAgent::Goose, 'Goose'],
     'junie' => [KnownAgent::Junie, 'Junie'],
     'openclaw' => [KnownAgent::OpenClaw, 'OpenClaw'],
+    'zcode' => [KnownAgent::ZCode, 'ZCode'],
+    'qwen-code' => [KnownAgent::QwenCode, 'Qwen Code'],
+    'crush' => [KnownAgent::Crush, 'Crush'],
+    'windsurf' => [KnownAgent::Windsurf, 'Windsurf'],
+    'zed' => [KnownAgent::Zed, 'Zed Agent'],
+    'kiro' => [KnownAgent::Kiro, 'Kiro'],
+    'jules' => [KnownAgent::Jules, 'Jules'],
 ]);
 
 // Standalone function
