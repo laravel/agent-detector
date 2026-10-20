@@ -2,7 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased](https://github.com/laravel/agent-detector/compare/v2.0.4...main)
+## [Unreleased](https://github.com/laravel/agent-detector/compare/v2.0.5...main)
+
+## [v2.0.5](https://github.com/laravel/agent-detector/compare/v2.0.4...v2.0.5) - 2026-10-20
+
+### What's Changed
+
+* Remove security policy in favor of the org-wide default by [@pushpak1300](https://github.com/pushpak1300) in https://github.com/laravel/agent-detector/pull/32
+* Bump shivammathur/setup-php from 2.37.2 to 2.40.0 in the github-actions group by [@dependabot](https://github.com/dependabot)[bot] in https://github.com/laravel/agent-detector/pull/33
+* [main] Adds ZCode detection by [@DarkGhostHunter](https://github.com/DarkGhostHunter) in https://github.com/laravel/agent-detector/pull/34
+* Add Qwen Code, Crush, Windsurf, Zed Agent, Kiro IDE, Copilot cloud agent, and Jules detection by [@pushpak1300](https://github.com/pushpak1300) in https://github.com/laravel/agent-detector/pull/35
+
+### New Contributors
+
+* [@DarkGhostHunter](https://github.com/DarkGhostHunter) made their first contribution in https://github.com/laravel/agent-detector/pull/34
+
+**Full Changelog**: https://github.com/laravel/agent-detector/compare/v2.0.4...v2.0.5
 
 ## [v2.0.4](https://github.com/laravel/agent-detector/compare/v2.0.3...v2.0.4) - 2026-10-05
 
