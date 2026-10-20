@@ -332,16 +332,6 @@ it('detects kiro-cli via KIRO_AGENT_PATH', function (): void {
         ->and($result->knownAgent())->toBe(KnownAgent::KiroCli);
 });
 
-it('detects cursor via CURSOR_TRACE_ID', function (): void {
-    putenv('CURSOR_TRACE_ID=some-trace-id');
-
-    $result = AgentDetector::detect();
-
-    expect($result->isAgent)->toBeTrue()
-        ->and($result->name)->toBe('cursor')
-        ->and($result->knownAgent())->toBe(KnownAgent::Cursor);
-});
-
 it('detects qwen-code via QWEN_CODE', function (): void {
     putenv('QWEN_CODE=1');
 
@@ -666,15 +656,6 @@ it('prioritizes CURSOR_AGENT over CLAUDECODE', function (): void {
     expect($result->name)->toBe('cursor');
 });
 
-it('prioritizes CLAUDECODE over CURSOR_TRACE_ID', function (): void {
-    putenv('CURSOR_TRACE_ID=some-trace-id');
-    putenv('CLAUDECODE=1');
-
-    $result = AgentDetector::detect();
-
-    expect($result->name)->toBe('claude');
-});
-
 it('prioritizes QWEN_CODE over GEMINI_CLI', function (): void {
     putenv('QWEN_CODE=1');
     putenv('GEMINI_CLI=true');
@@ -729,7 +710,7 @@ it('prioritizes CLAUDECODE over newer agent env vars', function (string $envVar)
     $result = AgentDetector::detect();
 
     expect($result->name)->toBe('claude');
-})->with(['KIMI_PLUGIN_ROOT', 'CLINE_ACTIVE', 'GOOSE_TERMINAL', 'JUNIE_DATA', 'JUNIE_SHIM_PATH', 'OPENCLAW_SHELL', 'ZCODE_ENV', 'CRUSH', 'WINDSURF_CASCADE_TERMINAL', 'CURSOR_TRACE_ID']);
+})->with(['KIMI_PLUGIN_ROOT', 'CLINE_ACTIVE', 'GOOSE_TERMINAL', 'JUNIE_DATA', 'JUNIE_SHIM_PATH', 'OPENCLAW_SHELL', 'ZCODE_ENV', 'CRUSH', 'WINDSURF_CASCADE_TERMINAL']);
 
 it('prioritizes CODEX_SANDBOX over CLINE_ACTIVE', function (): void {
     putenv('CODEX_SANDBOX=1');
@@ -823,7 +804,6 @@ it('returns correct enum for known agents', function (string $envVar, string $en
     'antigravity cli alias' => ['ANTIGRAVITY_CLI_ALIAS', 'agy', KnownAgent::Antigravity],
     'openclaw' => ['OPENCLAW_SHELL', '1', KnownAgent::OpenClaw],
     'zcode' => ['ZCODE_ENV', '1', KnownAgent::ZCode],
-    'cursor trace id' => ['CURSOR_TRACE_ID', 'trace-id', KnownAgent::Cursor],
     'qwen-code' => ['QWEN_CODE', '1', KnownAgent::QwenCode],
     'crush' => ['CRUSH', '1', KnownAgent::Crush],
     'windsurf' => ['WINDSURF_CASCADE_TERMINAL', '1', KnownAgent::Windsurf],
