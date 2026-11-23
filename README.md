@@ -165,15 +165,15 @@ Route::get('/docs/{page}', function (Request $request, string $page) {
 
 ```php
 // Block AI training crawlers (GPTBot, ClaudeBot, CCBot...)
-Route::middleware('block-ai')->group(...);
+Route::middleware('traffic.prevent')->group(...);
 
 // Block by category, kind, or agent id
-Route::middleware('block-ai:ai-crawler,agent')->group(...);
-Route::middleware('block-ai:training,ingest')->group(...);
-Route::middleware('block-ai:gptbot,bytespider')->group(...);
+Route::middleware('traffic.prevent:ai-crawler,agent')->group(...);
+Route::middleware('traffic.prevent:training,ingest')->group(...);
+Route::middleware('traffic.prevent:gptbot,bytespider')->group(...);
 
 // Attach the classification to Laravel's Context (logs, jobs)
-Route::middleware('traffic-context')->group(...);
+Route::middleware('traffic.context')->group(...);
 ```
 
 ### Blade Directives

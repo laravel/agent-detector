@@ -62,7 +62,7 @@ it('adds blade conditionals', function (string $userAgent, string $expected): vo
 ]);
 
 it('blocks ai training crawlers by default', function (): void {
-    Route::get('/', fn (): string => 'ok')->middleware('block-ai');
+    Route::get('/', fn (): string => 'ok')->middleware('traffic.prevent');
 
     $this->get('/', ['User-Agent' => GPTBOT])->assertForbidden();
     $this->get('/', ['User-Agent' => CHATGPT_USER])->assertOk();
@@ -71,7 +71,7 @@ it('blocks ai training crawlers by default', function (): void {
 });
 
 it('blocks configured categories, kinds and ids', function (string $targets, string $userAgent, int $status): void {
-    Route::get('/', fn (): string => 'ok')->middleware("block-ai:{$targets}");
+    Route::get('/', fn (): string => 'ok')->middleware("traffic.prevent:{$targets}");
 
     $this->get('/', ['User-Agent' => $userAgent])->assertStatus($status);
 })->with([
@@ -84,7 +84,7 @@ it('blocks configured categories, kinds and ids', function (string $targets, str
 ]);
 
 it('shares the classification with context', function (): void {
-    Route::get('/', fn (): array => Context::get('traffic'))->middleware('traffic-context');
+    Route::get('/', fn (): array => Context::get('traffic'))->middleware('traffic.context');
 
     $this->get('/', ['User-Agent' => GPTBOT])->assertExactJson([
         'category' => 'ai-crawler',

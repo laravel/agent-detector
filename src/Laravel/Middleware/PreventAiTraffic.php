@@ -10,12 +10,12 @@ use Laravel\AgentDetector\Laravel\Traffic;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Reject requests from AI traffic.
+ * Prevent AI traffic from accessing the route.
  *
  * With no arguments, AI training crawlers are blocked. Pass categories or kinds to
- * customize, e.g. "block-ai:ai-crawler,agent" or "block-ai:training,ingest".
+ * customize, e.g. "traffic.prevent:ai-crawler,agent" or "traffic.prevent:training,ingest".
  */
-class BlockAiTraffic
+class PreventAiTraffic
 {
     public function handle(Request $request, Closure $next, string ...$targets): mixed
     {

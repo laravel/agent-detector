@@ -14,7 +14,7 @@ use Laravel\AgentDetector\AgentDetector;
 use Laravel\AgentDetector\Http\TrafficClassifier;
 use Laravel\AgentDetector\Http\TrafficResult;
 use Laravel\AgentDetector\Laravel\Middleware\AddTrafficContext;
-use Laravel\AgentDetector\Laravel\Middleware\BlockAiTraffic;
+use Laravel\AgentDetector\Laravel\Middleware\PreventAiTraffic;
 use Symfony\Component\HttpFoundation\Response;
 
 class AgentDetectorServiceProvider extends ServiceProvider
@@ -63,8 +63,8 @@ class AgentDetectorServiceProvider extends ServiceProvider
     protected function registerMiddlewareAliases(): void
     {
         $this->callAfterResolving('router', function (Router $router): void {
-            $router->aliasMiddleware('block-ai', BlockAiTraffic::class);
-            $router->aliasMiddleware('traffic-context', AddTrafficContext::class);
+            $router->aliasMiddleware('traffic.prevent', PreventAiTraffic::class);
+            $router->aliasMiddleware('traffic.context', AddTrafficContext::class);
         });
     }
 
