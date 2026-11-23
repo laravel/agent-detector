@@ -1,0 +1,122 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Known Agent Traffic
+|--------------------------------------------------------------------------
+|
+| Ported from mintlify/agent-traffic (MIT © Mintlify).
+| https://github.com/mintlify/agent-traffic
+|
+| Patterns are matched case-insensitively against the User-Agent header.
+| A "version" or "tenant" named group is surfaced on the result.
+|
+*/
+
+return [
+    // Agents acting on behalf of a user...
+    ['id' => 'claude-code', 'name' => 'Claude Code', 'operator' => 'Anthropic', 'category' => 'agent', 'kind' => 'coding', 'patterns' => ['^Claude-User \(claude-code/(?<version>[\d.]+)', '^claude-code/(?<version>[\d.]+)']],
+    ['id' => 'github-copilot', 'name' => 'GitHub Copilot', 'operator' => 'GitHub', 'category' => 'agent', 'kind' => 'coding', 'patterns' => ['\bGitHubCopilot[\w-]*']],
+    ['id' => 'opencode', 'name' => 'OpenCode', 'operator' => 'SST', 'category' => 'agent', 'kind' => 'coding', 'patterns' => ['\bOpenCode-User/', '^opencode[/-]'], 'accept' => 'text/markdown;q=1.0, text/x-markdown;q=0.9, text/plain;q=0.8, text/html;q=0.7, */*;q=0.1'],
+    ['id' => 'gemini-cli', 'name' => 'Gemini CLI', 'operator' => 'Google', 'category' => 'agent', 'kind' => 'coding', 'patterns' => ['\bGoogleAgent-URLContext\b']],
+    ['id' => 'antigravity', 'name' => 'Antigravity', 'operator' => 'Google', 'category' => 'agent', 'kind' => 'coding', 'patterns' => ['\bGoogle-Jetski-Antigravity\b']],
+    ['id' => 'zcode', 'name' => 'ZCode', 'operator' => 'ZCode', 'category' => 'agent', 'kind' => 'coding', 'patterns' => ['\bZCode-WebFetch/']],
+    ['id' => 'deepseek-harness', 'name' => 'DeepSeek harness', 'operator' => 'DeepSeek', 'category' => 'agent', 'kind' => 'coding', 'patterns' => ['^deepseek-harness/']],
+    ['id' => 'chatgpt-user', 'name' => 'ChatGPT-User', 'operator' => 'OpenAI', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['\bChatGPT-User/']],
+    ['id' => 'chatgpt-agent', 'name' => 'ChatGPT agent', 'operator' => 'OpenAI', 'category' => 'agent', 'kind' => 'browser', 'patterns' => [], 'signatureAgent' => ['chatgpt.com']],
+    ['id' => 'claude-user', 'name' => 'Claude-User', 'operator' => 'Anthropic', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['compatible; Claude-User/', '^Claude-User$', '\bClaude-Web\b']],
+    ['id' => 'perplexity-user', 'name' => 'Perplexity-User', 'operator' => 'Perplexity', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['\bPerplexity-User/', '\bPerplexityUser/']],
+    ['id' => 'mistralai-user', 'name' => 'MistralAI-User', 'operator' => 'Mistral', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['\bMistralAI-User/']],
+    ['id' => 'duckassistbot', 'name' => 'DuckAssistBot', 'operator' => 'DuckDuckGo', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['\bDuckAssistBot/']],
+    ['id' => 'google-notebooklm', 'name' => 'Google NotebookLM', 'operator' => 'Google', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['\bGoogle-NotebookLM\b']],
+    ['id' => 'google-agent', 'name' => 'Google-Agent', 'operator' => 'Google', 'category' => 'agent', 'kind' => 'browser', 'patterns' => ['\bGoogle-Agent\b'], 'signatureAgent' => ['agent.bot.goog']],
+    ['id' => 'exa-user', 'name' => 'ExaUser', 'operator' => 'Exa', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['\bExaUser/'], 'signatureAgent' => ['crawler.exa.ai']],
+    ['id' => 'grok-agent', 'name' => 'Grok agent', 'operator' => 'xAI', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['\bgrok-agent/']],
+    ['id' => 'meta-externalfetcher', 'name' => 'Meta-ExternalFetcher', 'operator' => 'Meta', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['\bmeta-externalfetcher/']],
+    ['id' => 'amazon-quick', 'name' => 'Amazon Quick', 'operator' => 'Amazon', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['^amazon-Quick-on-behalf-of-(?<tenant>[\w-]+)']],
+    ['id' => 'amazon-agentcore-browser', 'name' => 'Amazon Bedrock AgentCore Browser', 'operator' => 'Amazon', 'category' => 'agent', 'kind' => 'browser', 'patterns' => ['\bAmazon-Bedrock-AgentCore-Browser\b']],
+    ['id' => 'minimax-agent', 'name' => 'MiniMax Agent', 'operator' => 'MiniMax', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['^MiniMaxAgent\b']],
+    ['id' => 'browserbase', 'name' => 'Browserbase', 'operator' => 'Browserbase', 'category' => 'agent', 'kind' => 'browser', 'patterns' => [], 'signatureAgent' => ['browserbase.com']],
+    ['id' => 'manus', 'name' => 'Manus', 'operator' => 'Manus', 'category' => 'agent', 'kind' => 'browser', 'patterns' => [], 'signatureAgent' => ['api.manus.im']],
+    ['id' => 'cursor', 'name' => 'Cursor', 'operator' => 'Anysphere', 'category' => 'agent', 'kind' => 'coding', 'patterns' => ['^Cursor/(?<version>[\d.]+) \(', '\bCursor/(?<version>[\d.]+) Chrome/[\d.]+ Electron/']],
+    ['id' => 'qoder', 'name' => 'Qoder CLI', 'operator' => 'Alibaba', 'category' => 'agent', 'kind' => 'coding', 'patterns' => ['^qodercli(cn)?/(?<version>[\d.]+)']],
+    ['id' => 'kiro', 'name' => 'Kiro', 'operator' => 'Amazon', 'category' => 'agent', 'kind' => 'coding', 'patterns' => ['^KiroServer/']],
+    ['id' => 'augment', 'name' => 'Augment', 'operator' => 'Augment Code', 'category' => 'agent', 'kind' => 'coding', 'patterns' => ['^Augment-WebFetch/']],
+    ['id' => 'qwen-code', 'name' => 'Qwen Code', 'operator' => 'Alibaba', 'category' => 'agent', 'kind' => 'coding', 'patterns' => ['^QwenCode/(?<version>[\d.]+)']],
+    ['id' => 'shap-user', 'name' => 'Shap-User', 'operator' => 'Shap', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['\bShap-User/']],
+    ['id' => 'kimi-user', 'name' => 'Kimi-User', 'operator' => 'Moonshot AI', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['\bKimi-User/']],
+    ['id' => 'liner-user', 'name' => 'Liner-User', 'operator' => 'Liner', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['\bLiner-User/']],
+    ['id' => 'gemini-deep-research', 'name' => 'Gemini Deep Research', 'operator' => 'Google', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['\bGemini-Deep-Research\b']],
+    ['id' => 'amzn-user', 'name' => 'Amzn-User', 'operator' => 'Amazon', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['\bAmzn-User/']],
+    ['id' => 'kagi-fetcher', 'name' => 'kagi-fetcher', 'operator' => 'Kagi', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['^kagi-fetcher\b']],
+    ['id' => 'tabstack', 'name' => 'Tabstack', 'operator' => 'Mozilla', 'category' => 'agent', 'kind' => 'assistant', 'patterns' => ['^Mozilla-Tabstack/']],
+
+    // AI crawlers (training, AI search, ingestion)...
+    ['id' => 'gptbot', 'name' => 'GPTBot', 'operator' => 'OpenAI', 'category' => 'ai-crawler', 'kind' => 'training', 'patterns' => ['\bGPTBot/']],
+    ['id' => 'claudebot', 'name' => 'ClaudeBot', 'operator' => 'Anthropic', 'category' => 'ai-crawler', 'kind' => 'training', 'patterns' => ['\bClaudeBot/', '^claudebot$', '^anthropic-ai$']],
+    ['id' => 'meta-externalagent', 'name' => 'Meta-ExternalAgent', 'operator' => 'Meta', 'category' => 'ai-crawler', 'kind' => 'training', 'patterns' => ['\bmeta-externalagent/']],
+    ['id' => 'bytespider', 'name' => 'Bytespider', 'operator' => 'ByteDance', 'category' => 'ai-crawler', 'kind' => 'training', 'patterns' => ['\bBytespider\b']],
+    ['id' => 'ccbot', 'name' => 'CCBot', 'operator' => 'Common Crawl', 'category' => 'ai-crawler', 'kind' => 'training', 'patterns' => ['\bCCBot/']],
+    ['id' => 'cohere-ai', 'name' => 'cohere-ai', 'operator' => 'Cohere', 'category' => 'ai-crawler', 'kind' => 'training', 'patterns' => ['\bcohere-ai\b', '\bcohere-training-data-crawler\b']],
+    ['id' => 'amazonbot', 'name' => 'Amazonbot', 'operator' => 'Amazon', 'category' => 'ai-crawler', 'kind' => 'training', 'patterns' => ['\bAmazonbot/']],
+    ['id' => 'googleother', 'name' => 'GoogleOther', 'operator' => 'Google', 'category' => 'ai-crawler', 'kind' => 'training', 'patterns' => ['\bGoogleOther\b']],
+    ['id' => 'elevenlabs-crawler', 'name' => 'ElevenlabsCrawler', 'operator' => 'ElevenLabs', 'category' => 'ai-crawler', 'kind' => 'training', 'patterns' => ['\bElevenlabsCrawler/']],
+    ['id' => 'oai-searchbot', 'name' => 'OAI-SearchBot', 'operator' => 'OpenAI', 'category' => 'ai-crawler', 'kind' => 'ai-search', 'patterns' => ['\bOAI-SearchBot/']],
+    ['id' => 'claude-searchbot', 'name' => 'Claude-SearchBot', 'operator' => 'Anthropic', 'category' => 'ai-crawler', 'kind' => 'ai-search', 'patterns' => ['\bClaude-SearchBot/']],
+    ['id' => 'perplexitybot', 'name' => 'PerplexityBot', 'operator' => 'Perplexity', 'category' => 'ai-crawler', 'kind' => 'ai-search', 'patterns' => ['\bPerplexityBot/']],
+    ['id' => 'exa-searchbot', 'name' => 'ExaSearchBot', 'operator' => 'Exa', 'category' => 'ai-crawler', 'kind' => 'ai-search', 'patterns' => ['\bExaSearchBot/'], 'signatureAgent' => ['crawler.exa.ai']],
+    ['id' => 'shapbot', 'name' => 'ShapBot', 'operator' => 'Shap', 'category' => 'ai-crawler', 'kind' => 'ai-search', 'patterns' => ['\bShapBot/']],
+    ['id' => 'youbot', 'name' => 'YouBot', 'operator' => 'You.com', 'category' => 'ai-crawler', 'kind' => 'ai-search', 'patterns' => ['\bYouBot\b'], 'signatureAgent' => ['you.com']],
+    ['id' => 'amazon-bedrock-kb', 'name' => 'Amazon Bedrock Knowledge Bases', 'operator' => 'Amazon', 'category' => 'ai-crawler', 'kind' => 'ingest', 'patterns' => ['^amazon-bedrock-knowledgebase-on-behalf-of-(?<tenant>[\w-]+)']],
+    ['id' => 'amazon-kendra', 'name' => 'Amazon Kendra', 'operator' => 'Amazon', 'category' => 'ai-crawler', 'kind' => 'ingest', 'patterns' => ['^amazon-kendra\b']],
+    ['id' => 'google-cloudvertexbot', 'name' => 'Google-CloudVertexBot', 'operator' => 'Google', 'category' => 'ai-crawler', 'kind' => 'ingest', 'patterns' => ['\bGoogle-CloudVertexBot\b']],
+    ['id' => 'kimibot', 'name' => 'KimiBot', 'operator' => 'Moonshot AI', 'category' => 'ai-crawler', 'kind' => 'training', 'patterns' => ['\bKimiBot/']],
+    ['id' => 'mistralai-training', 'name' => 'MistralAI-Training', 'operator' => 'Mistral', 'category' => 'ai-crawler', 'kind' => 'training', 'patterns' => ['\bMistralAI-Training/']],
+    ['id' => 'facebookbot', 'name' => 'FacebookBot', 'operator' => 'Meta', 'category' => 'ai-crawler', 'kind' => 'training', 'patterns' => ['\bFacebookBot/']],
+    ['id' => 'ai2bot', 'name' => 'AI2Bot', 'operator' => 'Allen Institute for AI', 'category' => 'ai-crawler', 'kind' => 'training', 'patterns' => ['\bAi2Bot(-Dolma)?\b']],
+    ['id' => 'clueweb', 'name' => 'ClueWeb-Crawler', 'operator' => 'Carnegie Mellon University', 'category' => 'ai-crawler', 'kind' => 'training', 'patterns' => ['^ClueWeb-Crawler/']],
+    ['id' => 'training-datasets', 'name' => 'Dataset crawlers', 'operator' => 'Various', 'category' => 'ai-crawler', 'kind' => 'training', 'patterns' => ['\bTimpibot/', '^ICC-Crawler/', '\bVelenPublicWebCrawler\b', '\bDiffbot/', '\bimg2(dataset|downloader)\b', '\blaion-huggingface-processor\b', '^webzio-extended\b', '\bImagesiftBot\b', '\bSBIntuitionsBot/']],
+    ['id' => 'kimi-searchbot', 'name' => 'Kimi-SearchBot', 'operator' => 'Moonshot AI', 'category' => 'ai-crawler', 'kind' => 'ai-search', 'patterns' => ['\bKimi-SearchBot/']],
+    ['id' => 'mistralai-index', 'name' => 'MistralAI-Index', 'operator' => 'Mistral', 'category' => 'ai-crawler', 'kind' => 'ai-search', 'patterns' => ['\bMistralAI-Index/']],
+    ['id' => 'linerbot', 'name' => 'LinerBot', 'operator' => 'Liner', 'category' => 'ai-crawler', 'kind' => 'ai-search', 'patterns' => ['\bLinerBot/']],
+    ['id' => 'amzn-searchbot', 'name' => 'Amzn-SearchBot', 'operator' => 'Amazon', 'category' => 'ai-crawler', 'kind' => 'ai-search', 'patterns' => ['\bAmzn-SearchBot/']],
+    ['id' => 'phindbot', 'name' => 'PhindBot', 'operator' => 'Phind', 'category' => 'ai-crawler', 'kind' => 'ai-search', 'patterns' => ['\bPhindBot\b']],
+    ['id' => 'linkupbot', 'name' => 'LinkupBot', 'operator' => 'Linkup', 'category' => 'ai-crawler', 'kind' => 'ai-search', 'patterns' => ['\bLinkupBot/']],
+    ['id' => 'tavilybot', 'name' => 'TavilyBot', 'operator' => 'Tavily', 'category' => 'ai-crawler', 'kind' => 'ai-search', 'patterns' => ['\bTavilyBot\b']],
+    ['id' => 'context7', 'name' => 'Context7-Crawler', 'operator' => 'Upstash', 'category' => 'ai-crawler', 'kind' => 'ingest', 'patterns' => ['^Context7-Crawler/']],
+    ['id' => 'firecrawl', 'name' => 'FirecrawlAgent', 'operator' => 'Firecrawl', 'category' => 'ai-crawler', 'kind' => 'ingest', 'patterns' => ['\bFirecrawlAgent\b']],
+    ['id' => 'cloudflare-ai-search', 'name' => 'Cloudflare AI Search', 'operator' => 'Cloudflare', 'category' => 'ai-crawler', 'kind' => 'ingest', 'patterns' => ['^Cloudflare-(AutoRAG|AI-Search)\b']],
+    ['id' => 'azure-ai-searchbot', 'name' => 'AzureAI-SearchBot', 'operator' => 'Microsoft', 'category' => 'ai-crawler', 'kind' => 'ingest', 'patterns' => ['\bAzureAI-SearchBot/']],
+    ['id' => 'amazon-qbusiness', 'name' => 'Amazon Q Business', 'operator' => 'Amazon', 'category' => 'ai-crawler', 'kind' => 'ingest', 'patterns' => ['^amazon-QBusiness\b']],
+    ['id' => 'atlassian-bot', 'name' => 'atlassian-bot', 'operator' => 'Atlassian', 'category' => 'ai-crawler', 'kind' => 'ingest', 'patterns' => ['\batlassian-bot\b']],
+
+    // Search engine crawlers...
+    ['id' => 'googlebot', 'name' => 'Googlebot', 'operator' => 'Google', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bGooglebot(-Image|-Video|-News|-Mobile)?/']],
+    ['id' => 'bingbot', 'name' => 'Bingbot', 'operator' => 'Microsoft', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bbingbot/']],
+    ['id' => 'applebot', 'name' => 'Applebot', 'operator' => 'Apple', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bApplebot/']],
+    ['id' => 'duckduckbot', 'name' => 'DuckDuckBot', 'operator' => 'DuckDuckGo', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bDuckDuckBot\b']],
+    ['id' => 'yandexbot', 'name' => 'YandexBot', 'operator' => 'Yandex', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bYandex(Bot|MobileBot|Images|News|Webmaster|AccessibilityBot|RenderResourcesBot)/']],
+    ['id' => 'baiduspider', 'name' => 'Baiduspider', 'operator' => 'Baidu', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bBaiduspider(-render)?/']],
+    ['id' => 'yisouspider', 'name' => 'YisouSpider', 'operator' => 'Alibaba (Shenma)', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bYisouSpider\b']],
+    ['id' => 'sogou', 'name' => 'Sogou web spider', 'operator' => 'Sogou', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bSogou web spider/']],
+    ['id' => 'petalbot', 'name' => 'PetalBot', 'operator' => 'Huawei', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bPetalBot\b']],
+    ['id' => 'meta-webindexer', 'name' => 'Meta-WebIndexer', 'operator' => 'Meta', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bmeta-webindexer/']],
+    ['id' => 'seznambot', 'name' => 'SeznamBot', 'operator' => 'Seznam', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bSeznamBot/']],
+    ['id' => 'coveobot', 'name' => 'Coveobot', 'operator' => 'Coveo', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bCoveobot/']],
+    ['id' => 'google-inspectiontool', 'name' => 'Google-InspectionTool', 'operator' => 'Google', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bGoogle-InspectionTool/']],
+    ['id' => 'tiktokspider', 'name' => 'TikTokSpider', 'operator' => 'ByteDance', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bTikTokSpider\b']],
+    ['id' => 'coccoc', 'name' => 'coccocbot', 'operator' => 'Cốc Cốc', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\b(image\.?)?coccoc/']],
+    ['id' => 'ibou', 'name' => 'ibou-search', 'operator' => 'ibou', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bibou-search/']],
+    ['id' => 'algolia-crawler', 'name' => 'Algolia Crawler', 'operator' => 'Algolia', 'category' => 'crawler', 'kind' => 'search', 'patterns' => ['\bAlgolia Crawler\b']],
+
+    // Other bots...
+    ['id' => 'ahrefsbot', 'name' => 'AhrefsBot', 'operator' => 'Ahrefs', 'category' => 'bot', 'kind' => 'seo', 'patterns' => ['\bAhrefs(Bot|SiteAudit)/']],
+    ['id' => 'semrushbot', 'name' => 'SemrushBot', 'operator' => 'Semrush', 'category' => 'bot', 'kind' => 'seo', 'patterns' => ['\bSemrushBot\b', '\bSiteAuditBot/']],
+    ['id' => 'seo-crawlers', 'name' => 'Other SEO crawlers', 'operator' => 'Various', 'category' => 'bot', 'kind' => 'seo', 'patterns' => ['\bBarkrowler/', '\bScreaming Frog SEO Spider/', '\bDataForSeoBot/', '\bSERankingBacklinksBot\b', '\bMJ12bot/', '\bDotBot/', '\bBLEXBot/', '\bserpstatbot/', '\bHubSpot Crawler\b']],
+    ['id' => 'link-previews', 'name' => 'Link preview fetchers', 'operator' => 'Various', 'category' => 'bot', 'kind' => 'preview', 'patterns' => ['\bfacebookexternalhit/', '\bSlackbot-LinkExpanding\b', '\bTwitterbot/', '\bDiscordbot/', '\bLinkedInBot/', '\bTelegramBot\b', '\bWhatsApp\b', '^Facebot/', '\bBingPreview/', '\bSkypeUriPreview\b', '\bgooglemessages/', '\bGoogleImageProxy\b', '\bGoogle Web Preview\b']],
+    ['id' => 'ad-verification', 'name' => 'Ad verification bots', 'operator' => 'Various', 'category' => 'bot', 'kind' => 'ads', 'patterns' => ['\bAdsBot-Google(-Mobile)?\b', '\bmeta-externalads/', '\bOAI-AdsBot/', '\bGoogle-Adwords\b', '(^|[(;,] ?)Mediapartners-Google\b', '^Google-Display-Ads-Bot\b', '\bGoogle-Ads-Conversions\b']],
+    ['id' => 'monitors', 'name' => 'Uptime and link monitors', 'operator' => 'Various', 'category' => 'bot', 'kind' => 'monitor', 'patterns' => ['^lychee/', '^Consul Health Check$', '\bUptimeRobot/', '\bPingdom\b', '\bStatusCake\b', '\bChecklyHQ\b', '\bDatadog/Synthetics\b', '\bGoogle-Site-Verification/', '\bGoogle Page Speed Insights\b', '\bGoogle Search Console\b', '\bGoogle-Structured-Data-Testing-Tool\b', '\bCloudflareObservatory/', '\bCatchpoint\b']],
+    ['id' => 'security-scanners', 'name' => 'Security scanners', 'operator' => 'Various', 'category' => 'bot', 'kind' => 'scanner', 'patterns' => ['\bDetectify\b', '\bCensysInspect/', '\bNuclei\b', '\bzgrab/', '\bAcunetix\b']],
+    ['id' => 'archivers', 'name' => 'Web archivers', 'operator' => 'Various', 'category' => 'bot', 'kind' => 'archiver', 'patterns' => ['\barchive\.org_bot\b', '\bia_archiver\b', '^Turnitin\b']],
+    ['id' => 'feedfetcher-google', 'name' => 'FeedFetcher-Google', 'operator' => 'Google', 'category' => 'bot', 'kind' => 'feed', 'patterns' => ['^FeedFetcher-Google\b']],
+];
