@@ -5,9 +5,6 @@
 | Generic HTTP Clients & Headless Browsers
 |--------------------------------------------------------------------------
 |
-| Ported from mintlify/agent-traffic (MIT © Mintlify).
-| https://github.com/mintlify/agent-traffic
-|
 | These are only consulted after known agents and markdown negotiation.
 |
 */

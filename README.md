@@ -130,7 +130,7 @@ Detection uses, in order: known User-Agent patterns, Accept header fingerprints,
 | `human`      |                                                                                                              |
 | `unknown`    |                                                                                                              |
 
-The bundled dataset lives in [`resources/agents.php`](resources/agents.php) and [`resources/http-clients.php`](resources/http-clients.php) and is ported from [mintlify/agent-traffic](https://github.com/mintlify/agent-traffic) (MIT).
+The bundled dataset lives in [`resources/agents.php`](resources/agents.php) and [`resources/http-clients.php`](resources/http-clients.php).
 
 ## Laravel Integration
 

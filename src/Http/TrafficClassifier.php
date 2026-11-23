@@ -7,8 +7,6 @@ namespace Laravel\AgentDetector\Http;
 /**
  * Classify inbound HTTP traffic as AI agents, AI crawlers, search crawlers, bots, or humans.
  *
- * Detection data is ported from mintlify/agent-traffic (MIT © Mintlify).
- *
  * @phpstan-type Entry array{id: string, name: string, operator?: string, category: string, kind: string, patterns: list<string>, accept?: string, signatureAgent?: list<string>}
  */
 class TrafficClassifier

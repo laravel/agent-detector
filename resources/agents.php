@@ -5,9 +5,6 @@
 | Known Agent Traffic
 |--------------------------------------------------------------------------
 |
-| Ported from mintlify/agent-traffic (MIT © Mintlify).
-| https://github.com/mintlify/agent-traffic
-|
 | Patterns are matched case-insensitively against the User-Agent header.
 | A "version" or "tenant" named group is surfaced on the result.
 |
